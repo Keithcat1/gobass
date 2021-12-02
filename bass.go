@@ -12,6 +12,7 @@ import "C"
 import (
 	"unsafe"
 	"runtime/cgo"
+	"unicode/utf16"
 )
 
 //Stores a C byte array, with a pointer to the data and its length.
@@ -92,9 +93,8 @@ func SetVolume(v float64) error {
 // StreamCreateURL
 // HSTREAM BASSDEF(BASS_StreamCreateURL)(const char *url, DWORD offset, DWORD flags, DOWNLOADPROC *proc, void *user);
 func StreamCreateURL(url string, flags Flags) (Channel, error) {
-	curl := C.CString(url)
-	defer C.free(unsafe.Pointer(curl))
-	ch := C.BASS_StreamCreateURL(curl, 0, cuint(flags), nil, nil)
+	curl := ToUTF16(url)
+	ch := C.BASS_StreamCreateURL(curl, 0, cuint(flags)|C.BASS_UNICODE, nil, nil)
 	return channelToError(ch)
 }
 
@@ -115,9 +115,8 @@ func StreamCreateFile(data interface{}, offset int, flags Flags) (Channel, error
 	case CBytes:
 		ch = C.BASS_StreamCreateFile(1, data.Data, culong(offset), culong(data.Length), cuint(flags))
 	case string:
-		cstring := unsafe.Pointer(C.CString(data))
-		defer C.free(cstring)
-		ch = C.BASS_StreamCreateFile(0, cstring, culong(offset), 0, cuint(flags))
+		cstring := unsafe.Pointer(ToUTF16(data))
+		ch = C.BASS_StreamCreateFile(0, cstring, culong(offset), 0, cuint(flags)|C.BASS_UNICODE)
 	case []byte:
 		cbytes := C.CBytes(data)
 		ch = C.BASS_StreamCreateFile(1, cbytes, culong(offset), culong(len(data)), cuint(flags))
@@ -139,8 +138,7 @@ func SampleLoad(data interface{}, offset, max, flags Flags) (Sample, error) {
 	case CBytes:
 		ch = C.BASS_SampleLoad(1, data.Data, culong(offset), cuint(data.Length), cuint(max), cuint(flags))
 	case string:
-		cstring := unsafe.Pointer(C.CString(data))
-		defer C.free(cstring)
+		cstring := unsafe.Pointer(ToUTF16(data))
 		ch = C.BASS_SampleLoad(0, cstring, culong(offset), 0, cuint(max), cuint(flags))
 	case []byte:
 		// According to BASS documentation, BASS_SampleLoad makes an internal copy of the passed-in memory, so we don't need to worry about CGO restrictions and can just pass a pointer to Go memory
@@ -208,9 +206,8 @@ func (self Channel) GetTags(tag int) string {
 
 // PluginLoad
 func PluginLoad(file string, flags Flags) (handle uint32, err error) {
-	cfile := C.CString(file)
-	plugin := C.BASS_PluginLoad(cfile, cuint(flags))
-	C.free(unsafe.Pointer(cfile))
+	cfile := ToUTF16(file)
+	plugin := C.BASS_PluginLoad(cfile, cuint(flags)|C.BASS_UNICODE)
 	return uint32(plugin), errMsg()
 }
 
@@ -526,4 +523,11 @@ func (self Flags) AddIf(flag Flags, condition bool) Flags {
 }
 func GetCPU() float64 {
 	return float64(C.BASS_GetCPU())
+}
+// converts a UTF8 string to a UTF16 string, then returns a pointer to that UTF16 data suitable to pass to BASS along with the C.BASS_UNICODE flag
+// only exposed so that BASS plugin bindings can use it!
+func ToUTF16(s string) *C.char {
+	data := utf16.Encode([]rune(s))
+	ptr := unsafe.Pointer(&data[0])
+	return (*C.char)(ptr)
 }

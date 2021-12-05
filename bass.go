@@ -245,6 +245,9 @@ func GetCPU() float64 {
 // converts a UTF8 string to a UTF16 string, then returns a pointer to that UTF16 data suitable to pass to BASS along with the C.BASS_UNICODE flag
 // only exposed so that BASS plugin bindings can use it!
 func ToUTF16(s string) *C.char {
+	if len(s) == 0 {
+		return nil
+	}
 	data := utf16.Encode([]rune(s))
 	ptr := unsafe.Pointer(&data[0])
 	return (*C.char)(ptr)

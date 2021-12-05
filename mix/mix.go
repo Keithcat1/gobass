@@ -63,3 +63,14 @@ func ChannelFlags(channel bass.Channel, flags, mask bass.Flags) (bass.Flags, err
 		return flags, nil
 	}
 }
+func ChannelSetSync(channel bass.Channel, syncType int, flags bass.Flags, param int, callback unsafe.Pointer, userdata unsafe.Pointer) (bass.Sync, error) {
+	result := C.BASS_Mixer_ChannelSetSync(C.DWORD(channel.GetHandle()), C.DWORD(syncType)|C.DWORD(flags), C.QWORD(param), (*C.SYNCPROC)(callback), userdata)
+	if result == 0 {
+		return 0, bass.GetLastError()
+	} else {
+		return bass.Sync(result), nil
+	}
+}
+func ChannelSetPosition(channel bass.Channel, pos int, posType int) error {
+	return boolToError(C.BASS_Mixer_ChannelSetPosition(C.DWORD(channel.GetHandle()), C.QWORD(pos), C.DWORD(posType)))
+}

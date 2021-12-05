@@ -8,8 +8,8 @@ import (
 import "C"
 
 func (self Mixer) toError() (Mixer, error) {
-	if self == 0 {
-		return 0, bass.GetLastError()
+	if self.GetHandle() == 0 {
+		return Mixer{}, bass.GetLastError()
 	} else {
 		return self, nil
 	}

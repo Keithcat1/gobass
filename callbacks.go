@@ -18,7 +18,7 @@ type GoSyncproc = func(sync Sync, channel Channel, data int)
 //export _GoSyncprocCallback
 func _GoSyncprocCallback(sync C.HSYNC, channel C.HCHANNEL, data C.DWORD, userdata unsafe.Pointer) {
 fn := cgo.Handle(uintptr(userdata)).Value().(GoSyncproc)
-	fn(Sync(sync), Channel(channel), int(data))
+	fn(Sync(sync), Channel{handle: channel}, int(data))
 }
 var (
 	STREAMPROC_DEVICE *C.STREAMPROC = C.STREAMPROC_DEVICE

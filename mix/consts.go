@@ -17,5 +17,5 @@ const (
 	MixerChanMatrix = C.BASS_MIXER_CHAN_MATRIX
 	MixerChanNorampin = C.BASS_MIXER_CHAN_NORAMPIN
 	MixerChanPause = C.BASS_MIXER_CHAN_PAUSE
-
+	AttribMixerThreads = C.BASS_ATTRIB_MIXER_THREADS
 )

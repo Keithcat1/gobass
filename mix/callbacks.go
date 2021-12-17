@@ -13,7 +13,7 @@ import "C"
 
 
 
-//export _GoSyncprocCallback
+//export _MixSyncprocCallback
 func _MixSyncprocCallback(sync C.HSYNC, channel C.HCHANNEL, data C.DWORD, userdata unsafe.Pointer) {
 fn := cgo.Handle(uintptr(userdata)).Value().(bass.GoSyncproc)
 	fn(bass.Sync(sync), bass.ChannelFromHandle(uint32(channel)), int(data))

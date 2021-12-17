@@ -19,5 +19,5 @@ fn := cgo.Handle(uintptr(userdata)).Value().(bass.GoSyncproc)
 	fn(bass.Sync(sync), bass.ChannelFromHandle(uint32(channel)), int(data))
 }
 var (
-	mixSyncprocCallback *C.SYNCPROC = C._get_GoSyncprocCallbackWrapper()
+	mixSyncprocCallback *C.SYNCPROC = C._get_MixSyncprocCallbackWrapper()
 )

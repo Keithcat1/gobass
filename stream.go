@@ -12,10 +12,11 @@ import (
 type Stream struct {
 	Channel
 }
-func StreamCreate(freq, chans int, flags Flags, streamproc *C.STREAMPROC, userdata unsafe.Pointer) (Stream, error) {
+func StreamCreateCCallback(freq, chans int, flags Flags, streamproc *C.STREAMPROC, userdata unsafe.Pointer) (Stream, error) {
 	channel := C.BASS_StreamCreate(cuint(freq), cuint(chans), cuint(flags), streamproc, userdata)
 	return streamToError(channel)
 }
+
 func (self Stream) ToError() (Stream, error) {
 	_, err := self.Channel.ToError()
 	return self, err
@@ -43,7 +44,7 @@ func StreamCreateFile(data interface{}, offset int, flags Flags) (Stream, error)
 		// unlike BASS_SampleLoad, BASS won't make a copy of the sample data internally, which means we can't just pass a pointer to the Go bytes. Instead we need to set a sync to free the bytes when the stream it's associated with is freed
 		if ch != 0 {
 			channel := Channel{handle: ch}.toStream()
-			_, err := channel.SetSync(SYNC_FREE, SYNC_ONETIME, 0, SyncprocFree, cbytes)
+			_, err := channel.SetSyncCCallback(SYNC_FREE, SYNC_ONETIME, 0, SyncprocFree, cbytes)
 			if err != nil {
 				return Stream{}, err
 			}

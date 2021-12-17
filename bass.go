@@ -223,14 +223,14 @@ func (self Channel) RemoveSync(sync Sync) error {
 	return boolToError(C.BASS_ChannelRemoveSync(self.cint(), C.DWORD(sync)))
 }
 
-// creates a new runtime/cgo.Handle and converts it to unsafe.Pointer, ready to be pased into C land
-func NewCGOHandle(value interface{}) unsafe.Pointer {
-	return unsafe.Pointer(cgo.NewHandle(value))
+// creates a new runtime/cgo.Handle, ready to be psased into C land
+func NewCGOHandle(value interface{}) cgo.Handle {
+	return cgo.NewHandle(value)
 }
-// frees an unneeded handle created by NewCGOHandle
-func DestroyCGOHandle(handle unsafe.Pointer) {
-	cgo.Handle(handle).Delete()
-}
+
+
+
+
 // if condition is true, adds the specified flags and returns the result, else just returns self without modifying it
 func (self Flags) AddIf(flag Flags, condition bool) Flags {
 	if condition {

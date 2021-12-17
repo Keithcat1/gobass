@@ -34,7 +34,7 @@ func RecordFree() error {
 	return boolToError(C.BASS_RecordFree())
 }
 
-func RecordStart(freq, chans int, flags Flags, streamproc *C.RECORDPROC, userdata unsafe.Pointer) (Record, error) {
+func RecordStartCCallback(freq, chans int, flags Flags, streamproc *C.RECORDPROC, userdata unsafe.Pointer) (Record, error) {
 	channel := C.BASS_RecordStart(cuint(freq), cuint(chans), cuint(flags), streamproc, userdata)
 	return Record{Channel: ChannelFromHandle(uint32(channel))}.ToError()
 }

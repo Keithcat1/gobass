@@ -8,6 +8,7 @@ import "C"
 
 import (
 	"unsafe"
+	"runtime/cgo"
 )
 type Channel struct {
 	handle C.DWORD
@@ -33,7 +34,15 @@ func (self Channel) ToError() (Channel, error) {
 func ChannelFromHandle(handle uint32) Channel {
 	return Channel{handle: C.DWORD(handle)}
 }
-func (self Channel) SetSync(syncType int, flags Flags, param int, callback *C.SYNCPROC, userdata unsafe.Pointer) (Sync, error) {
+func (self Channel) SetSync(syncType int, flags Flags, param int, callback cgo.Handle) (Sync, error) {
+	sync := Sync(C.BASS_ChannelSetSync(self.cint(), cuint(syncType)|cuint(flags), culong(param), goSyncprocCallback, unsafe.Pointer(callback)))
+	if sync == 0 {
+return 0, errMsg()
+	} else {
+		return sync, nil
+	}
+}
+func (self Channel) SetSyncCCallback(syncType int, flags Flags, param int, callback *C.SYNCPROC, userdata unsafe.Pointer) (Sync, error) {
 	sync := Sync(C.BASS_ChannelSetSync(self.cint(), cuint(syncType)|cuint(flags), culong(param), callback, userdata))
 	if sync == 0 {
 return 0, errMsg()

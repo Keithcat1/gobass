@@ -25,6 +25,6 @@ var (
 	STREAMPROC_PUSH *C.STREAMPROC = C.STREAMPROC_PUSH
 	STREAMPROC_DUMMY *C.STREAMPROC = C.STREAMPROC_DUMMY
 	RecordCallbackStreamPutData *C.RECORDPROC = C._get_GoBassRecordCallbackStreamPutData()
-	GoSyncprocCallback *C.SYNCPROC = C._get_GoSyncprocCallbackWrapper()
+	goSyncprocCallback *C.SYNCPROC = C._get_GoSyncprocCallbackWrapper()
 SyncprocFree *C.SYNCPROC = C._get_SyncprocFree()
 )

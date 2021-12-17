@@ -7,18 +7,17 @@ import (
 
 /*
 #include "bass.h"
-#include "_gobass_callbacks.h"
-
+extern SYNCPROC* _get_MixSyncprocCallbackWrapper();
 */
 import "C"
-type GoSyncproc = func(bass.Sync, bass.Channel, int)
+
 
 
 //export _GoSyncprocCallback
-func _GoSyncprocCallback(sync C.HSYNC, channel C.HCHANNEL, data C.DWORD, userdata unsafe.Pointer) {
-fn := cgo.Handle(uintptr(userdata)).Value().(GoSyncproc)
+func _MixSyncprocCallback(sync C.HSYNC, channel C.HCHANNEL, data C.DWORD, userdata unsafe.Pointer) {
+fn := cgo.Handle(uintptr(userdata)).Value().(bass.GoSyncproc)
 	fn(bass.Sync(sync), bass.ChannelFromHandle(uint32(channel)), int(data))
 }
 var (
-	goSyncprocCallback *C.SYNCPROC = C._get_GoSyncprocCallbackWrapper()
+	mixSyncprocCallback *C.SYNCPROC = C._get_GoSyncprocCallbackWrapper()
 )

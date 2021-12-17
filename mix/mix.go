@@ -66,7 +66,7 @@ func ChannelFlags(channel bass.Channel, flags, mask bass.Flags) (bass.Flags, err
 	}
 }
 func ChannelSetSync(channel bass.Channel, syncType int, flags bass.Flags, param int, callback cgo.Handle) (bass.Sync, error) {
-	result := C.BASS_Mixer_ChannelSetSync(C.DWORD(channel.GetHandle()), C.DWORD(syncType)|C.DWORD(flags), C.QWORD(param), C._get_GoSyncprocCallbackWrapper(), unsafe.Pointer(callback))
+	result := C.BASS_Mixer_ChannelSetSync(C.DWORD(channel.GetHandle()), C.DWORD(syncType)|C.DWORD(flags), C.QWORD(param), mixSyncprocCallback, unsafe.Pointer(callback))
 	if result == 0 {
 		return 0, bass.GetLastError()
 	} else {

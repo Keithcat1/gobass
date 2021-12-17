@@ -248,7 +248,7 @@ func ToUTF16(s string) *C.char {
 	if len(s) == 0 {
 		return nil
 	}
-	data := utf16.Encode([]rune(s))
+	data := append(utf16.Encode([]rune(s)), 0)
 	ptr := unsafe.Pointer(&data[0])
 	return (*C.char)(ptr)
 }

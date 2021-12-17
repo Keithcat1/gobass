@@ -6,10 +6,11 @@ import (
 
 /*
 #include "bass.h"
+#include "_gobass_callbacks.h"
 #cgo CFLAGS: -Wno-pointer-to-int-cast
-extern RECORDPROC* _get_GoBassRecordCallbackStreamPutData();
-extern SYNCPROC* _get_GoSyncprocCallbackWrapper();
-extern SYNCPROC* _get_SyncprocFree();
+
+
+
 */
 import "C"
 type GoSyncproc = func(sync Sync, channel Channel, data int)

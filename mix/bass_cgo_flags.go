@@ -5,7 +5,7 @@ package mix
 #cgo windows,386 LDFLAGS: -L${SRCDIR}/../lib/windows_386
 #cgo windows,amd64 LDFLAGS: -L${SRCDIR}/../lib/windows_amd64
 #cgo darwin LDFLAGS: -L${SRCDIR}/../lib/darwin
-#cgo LDFLAGS: -lbassmix
+#cgo LDFLAGS: -lbassmix -lbass
 
 #cgo CFLAGS: -I${SRCDIR}/../include
 */
